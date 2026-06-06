@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>ค้นหาชื่อผู้เข้าอบรม</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      padding: 24px;
+      color: #222;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 24px;
+      font-size: 16px;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 20px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      outline: none;
+      margin-bottom: 18px;
+    }
+
+    input:focus {
+      border-color: #3367d6;
+      box-shadow: 0 0 0 3px rgba(51,103,214,0.15);
+    }
+
+    .result {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .name-card {
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0;
+      background: #fafafa;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .name-card:hover {
+      background: #eef3ff;
+      border-color: #3367d6;
+    }
+
+    .empty {
+      text-align: center;
+      color: #888;
+      padding: 20px;
+    }
+
+    .note {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+      color: #777;
+    }
+
+    .count {
+      margin-bottom: 12px;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>ค้นหาชื่อผู้เข้าอบรม</h1>
+    <div class="subtitle">
+      พิมพ์บางส่วนของชื่อหรือนามสกุล แล้วเลือกชื่อของท่าน
+    </div>
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="พิมพ์ชื่อหรือนามสกุล เช่น อรุณรัตน์"
+      autocomplete="off"
+    />
+
+    <div id="count" class="count"></div>
+    <div id="result" class="result"></div>
+
+    <div class="note">
+      เมื่อเลือกชื่อแล้ว ระบบจะเปิด Google Form พร้อมกรอกชื่อให้อัตโนมัติ
+    </div>
+  </div>
+
+  <script>
+    // URL Google Form แบบ prefilled ที่อาจารย์ส่งมา
+    // ไม่ต้องใส่ชื่อจริงในนี้ก็ได้ เพราะโค้ดจะเปลี่ยน entry.1710551175 ให้อัตโนมัติ
+    const PREFILL_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIUDQHCrhcDUvgkr7JHAdMm5YUfsOPX0pj4aKcD4TYD1bg9Q/viewform?usp=pp_url&entry.1710551175=TESTNAME&entry.1169825681=%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%9A%E0%B8%B2%E0%B8%A5%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B9%80%E0%B8%AA%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%AA%E0%B8%B8%E0%B8%82%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%95%E0%B8%B3%E0%B8%9A%E0%B8%A5&entry.1695881642=%E0%B9%83%E0%B8%8A%E0%B9%88";
+
+    // ช่องชื่อผู้เข้าอบรม
+    const NAME_ENTRY_ID = "entry.1710551175";
+
+    // ใส่รายชื่อผู้เข้าอบรมตรงนี้
+    const names = [
+      "อรุณรัตน์ นันทบุรมย์",
+      "เกศรินทร์ ชัยศิริ",
+      "คุณชาติ วิภาสวงศ์",
+      "จิตริน เชื้อสูง",
+      "ชื่นนภา อัศวินโกวิท",
+      "ชุติมา ศรียาภัย",
+      "ณัฏฐธิดา บัวทอง",
+      "ณัฐกานต์ ทิพพิลา",
+      "ทรงกรต พิมศร",
+      "ทรงสมร เสรีสุวรรณกิจ",
+      "ทัศน์พล แสนปัญญา",
+      "ธีรวิทย์ บำรุงศรี",
+      "นภชา พิริยะชนานุสรณ์",
+      "นิติรัฐ ไหว้พรหม",
+      "ปัญชนิตย์ นวกิจรังสรรค์",
+      "ปิ่นกาญจน์ ชินสุขเสริม",
+      "พงษ์เทพ อมัตรวงศ์",
+      "มัตติกา คุลี",
+      "รังสิยา วงษ์กล่อม",
+      "ศุภมาส ทองทรัพย์",
+      "สมฤทัย บุญญาวรรณ",
+      "สัจจา เกษงอน",
+      "สัตตกมล ม่วงประเสริฐ",
+      "สุชาดา กาบิน",
+      "หยาดพิรุณ อินตา",
+      "วรรณธนพร สายนุ้ย"
+    ];
+
+    const searchInput = document.getElementById("searchInput");
+    const resultDiv = document.getElementById("result");
+    const countDiv = document.getElementById("count");
+
+    function normalizeText(text) {
+      return text
+        .toString()
+        .replace(/\u200B/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+    }
+
+    function renderResults(keyword = "") {
+      const text = normalizeText(keyword);
+      resultDiv.innerHTML = "";
+      countDiv.textContent = "";
+
+      if (!text) {
+        resultDiv.innerHTML = `<div class="empty">กรุณาพิมพ์ชื่อหรือนามสกุลเพื่อค้นหา</div>`;
+        return;
+      }
+
+      const filteredNames = names.filter(name =>
+        normalizeText(name).includes(text)
+      );
+
+      countDiv.textContent = `พบ ${filteredNames.length} รายชื่อ`;
+
+      if (filteredNames.length === 0) {
+        resultDiv.innerHTML = `<div class="empty">ไม่พบรายชื่อที่ค้นหา</div>`;
+        return;
+      }
+
+      filteredNames.forEach(name => {
+        const div = document.createElement("div");
+        div.className = "name-card";
+        div.textContent = name;
+
+        div.addEventListener("click", () => {
+          openGoogleForm(name);
+        });
+
+        resultDiv.appendChild(div);
+      });
+    }
+
+    function openGoogleForm(name) {
+      const url = new URL(PREFILL_URL);
+
+      // เปลี่ยนค่า field ชื่อให้เป็นชื่อที่ผู้ใช้เลือก
+      url.searchParams.set(NAME_ENTRY_ID, name);
+
+      window.location.href = url.toString();
+    }
+
+    searchInput.addEventListener("input", function () {
+      renderResults(this.value);
+    });
+
+    renderResults();
+  </script>
+</body>
+</html>
