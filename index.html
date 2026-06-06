@@ -106,6 +106,7 @@
       id="searchInput"
       placeholder="พิมพ์ชื่อหรือนามสกุล เช่น อรุณรัตน์"
       autocomplete="off"
+      disabled
     />
 
     <div id="count" class="count"></div>
@@ -117,42 +118,13 @@
   </div>
 
   <script>
-    // URL Google Form แบบ prefilled ที่อาจารย์ส่งมา
-    // ไม่ต้องใส่ชื่อจริงในนี้ก็ได้ เพราะโค้ดจะเปลี่ยน entry.1710551175 ให้อัตโนมัติ
+    // URL Google Form แบบ prefilled
     const PREFILL_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIUDQHCrhcDUvgkr7JHAdMm5YUfsOPX0pj4aKcD4TYD1bg9Q/viewform?usp=pp_url&entry.1710551175=%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%93%E0%B8%A3%E0%B8%B1%E0%B8%95%E0%B8%99%E0%B9%8C%E2%80%8B+%E0%B8%99%E0%B8%B1%E0%B8%99%E0%B8%97%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%A1%E0%B8%A2%E0%B9%8C&entry.1169825681=%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%9A%E0%B8%B2%E0%B8%A5%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B9%80%E0%B8%AA%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%AA%E0%B8%B8%E0%B8%82%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%95%E0%B8%B3%E0%B8%9A%E0%B8%A5&entry.1695881642=%E0%B9%83%E0%B8%8A%E0%B9%88&entry.703360942=%E0%B9%80%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B9%84%E0%B8%9B%E0%B9%83%E0%B8%99%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9C%E0%B8%A5%E0%B8%B4%E0%B8%95%E0%B8%A2%E0%B8%B2+%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%82%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B2+%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%99%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%AA%E0%B8%B1%E0%B9%88%E0%B8%87%E0%B8%A2%E0%B8%B2%E0%B9%80%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B2%E0%B9%83%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%AD%E0%B8%B2%E0%B8%93%E0%B8%B2%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%A3+%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD+%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B9%80%E0%B8%81%E0%B9%87%E0%B8%9A%E0%B8%A2%E0%B8%B2+%E0%B9%83%E0%B8%99%E0%B8%A3%E0%B8%B0%E0%B8%AB%E0%B8%A7%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B8%A5%E0%B8%B2%E0%B8%97%E0%B8%B3%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%9E%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A7%E0%B8%9A%E0%B8%84%E0%B8%B8%E0%B8%A1&entry.703360942=%E0%B8%99%E0%B8%B3%E0%B8%A2%E0%B8%B2%E0%B9%83%E0%B8%99%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%9C%E0%B8%A3%E0%B8%9E%E0%B8%AD%E0%B8%AA%E0%B8%A1%E0%B8%84%E0%B8%A7%E0%B8%A3%E0%B9%84%E0%B8%9B%E0%B9%80%E0%B8%9B%E0%B9%87%E0%B8%99%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B8%AD%E0%B8%A2%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%9E%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%A7%E0%B8%B4%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B2%E0%B8%B0%E0%B8%AB%E0%B9%8C&entry.703360942=%E0%B8%A2%E0%B8%B6%E0%B8%94+%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD+%E0%B8%AD%E0%B8%B2%E0%B8%A2%E0%B8%B1%E0%B8%94+%E0%B8%A2%E0%B8%B2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B9%83%E0%B8%99%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B8%B3%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%9C%E0%B8%B4%E0%B8%94+%E0%B8%95%E0%B8%A5%E0%B8%AD%E0%B8%94%E0%B8%88%E0%B8%99%E0%B8%A0%E0%B8%B2%E0%B8%8A%E0%B8%99%E0%B8%B0%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%AB%E0%B8%B5%E0%B8%9A%E0%B8%AB%E0%B9%88%E0%B8%AD%E0%B8%9A%E0%B8%A3%E0%B8%A3%E0%B8%88%E0%B8%B8%E0%B8%A2%E0%B8%B2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A3%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B9%80%E0%B8%81%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%A7%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%B1%E0%B8%9A%E0%B8%A2%E0%B8%B2%E0%B8%94%E0%B8%B1%E0%B8%87%E0%B8%81%E0%B8%A5%E0%B9%88%E0%B8%B2%E0%B8%A7&entry.703360942=%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%9C%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%A7%E0%B8%B4%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B2%E0%B8%B0%E0%B8%AB%E0%B9%8C%E0%B8%84%E0%B8%B8%E0%B8%93%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%A2%E0%B8%B2+%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%99%E0%B8%B3%E0%B9%84%E0%B8%9B%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B8%A7%E0%B8%B4%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B2%E0%B8%B0%E0%B8%AB%E0%B9%8C+%E0%B9%83%E0%B8%AB%E0%B9%89%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%8A%E0%B8%B2%E0%B8%8A%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%9A+%E0%B9%82%E0%B8%94%E0%B8%A2%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B9%80%E0%B8%AB%E0%B9%87%E0%B8%99%E0%B8%8A%E0%B8%AD%E0%B8%9A%E0%B8%88%E0%B8%B2%E0%B8%81%E0%B8%81%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%81%E0%B8%B2%E0%B8%A3&entry.2030173446=%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88&entry.2085136044=%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%AB%E0%B8%B2+(Detection)&entry.1821930045=%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%AD%E0%B8%9A%E0%B8%AA%E0%B8%99%E0%B8%AD%E0%B8%87+(Response)&entry.231296730=%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%B1%E0%B8%99+(Prevention)&entry.110238133=%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%97%E0%B8%B3%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B9%80%E0%B8%9D%E0%B9%89%E0%B8%B2%E0%B8%A3%E0%B8%B0%E0%B8%A7%E0%B8%B1%E0%B8%87%E0%B8%9C%E0%B8%A5%E0%B8%B4%E0%B8%95%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A1%E0%B8%B5%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B9%80%E0%B8%AA%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%87&entry.1638185788=%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%81%E0%B8%B3%E0%B8%AB%E0%B8%99%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%94%E0%B8%B3%E0%B9%80%E0%B8%99%E0%B8%B4%E0%B8%99%E0%B8%87%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%99%E0%B9%82%E0%B8%A2%E0%B8%9A%E0%B8%B2%E0%B8%A2%E0%B9%83%E0%B8%99%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%B1%E0%B8%8D%E0%B8%AB%E0%B8%B2%E0%B8%AA%E0%B9%80%E0%B8%95%E0%B8%B5%E0%B8%A2%E0%B8%A3%E0%B8%AD%E0%B8%A2%E0%B8%94%E0%B9%8C%E0%B8%9B%E0%B8%A5%E0%B8%AD%E0%B8%A1%E0%B8%9B%E0%B8%99&entry.1332825395=%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%9A%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD-%E0%B8%82%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B2%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%82%E0%B8%B2%E0%B8%A2%E0%B8%A2%E0%B8%B2%E0%B9%83%E0%B8%99%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88";
 
-    // ช่องชื่อผู้เข้าอบรม
+    // ช่องชื่อผู้เข้าอบรมใน Google Form
     const NAME_ENTRY_ID = "entry.1710551175";
 
-    // ใส่รายชื่อผู้เข้าอบรมตรงนี้
-    const names = [
-      "อรุณรัตน์ นันทบุรมย์",
-      "เกศรินทร์ ชัยศิริ",
-      "คุณชาติ วิภาสวงศ์",
-      "จิตริน เชื้อสูง",
-      "ชื่นนภา อัศวินโกวิท",
-      "ชุติมา ศรียาภัย",
-      "ณัฏฐธิดา บัวทอง",
-      "ณัฐกานต์ ทิพพิลา",
-      "ทรงกรต พิมศร",
-      "ทรงสมร เสรีสุวรรณกิจ",
-      "ทัศน์พล แสนปัญญา",
-      "ธีรวิทย์ บำรุงศรี",
-      "นภชา พิริยะชนานุสรณ์",
-      "นิติรัฐ ไหว้พรหม",
-      "ปัญชนิตย์ นวกิจรังสรรค์",
-      "ปิ่นกาญจน์ ชินสุขเสริม",
-      "พงษ์เทพ อมัตรวงศ์",
-      "มัตติกา คุลี",
-      "รังสิยา วงษ์กล่อม",
-      "ศุภมาส ทองทรัพย์",
-      "สมฤทัย บุญญาวรรณ",
-      "สัจจา เกษงอน",
-      "สัตตกมล ม่วงประเสริฐ",
-      "สุชาดา กาบิน",
-      "หยาดพิรุณ อินตา",
-      "วรรณธนพร สายนุ้ย"
-    ];
+    let names = [];
 
     const searchInput = document.getElementById("searchInput");
     const resultDiv = document.getElementById("result");
@@ -162,9 +134,62 @@
       return text
         .toString()
         .replace(/\u200B/g, "")
+        .replace(/\u200C/g, "")
+        .replace(/\u200D/g, "")
+        .replace(/\uFEFF/g, "")
         .replace(/\s+/g, " ")
         .trim()
         .toLowerCase();
+    }
+
+    async function loadNames() {
+      try {
+        resultDiv.innerHTML = `<div class="empty">กำลังโหลดรายชื่อ...</div>`;
+
+        const response = await fetch("names.json", {
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error("โหลด names.json ไม่สำเร็จ");
+        }
+
+        const data = await response.json();
+
+        names = Array.isArray(data.names) ? data.names : [];
+
+        names = names
+          .map(name => normalizeDisplayName(name))
+          .filter(name => name !== "");
+
+        names = [...new Set(names)];
+
+        searchInput.disabled = false;
+        searchInput.focus();
+
+        countDiv.textContent = `มีรายชื่อทั้งหมด ${names.length} คน`;
+        resultDiv.innerHTML = `<div class="empty">กรุณาพิมพ์ชื่อหรือนามสกุลเพื่อค้นหา</div>`;
+      } catch (error) {
+        console.error(error);
+        countDiv.textContent = "";
+        resultDiv.innerHTML = `
+          <div class="empty">
+            โหลดรายชื่อไม่สำเร็จ<br>
+            กรุณาตรวจสอบว่าไฟล์ names.json อยู่ในโฟลเดอร์เดียวกับ index.html
+          </div>
+        `;
+      }
+    }
+
+    function normalizeDisplayName(text) {
+      return text
+        .toString()
+        .replace(/\u200B/g, "")
+        .replace(/\u200C/g, "")
+        .replace(/\u200D/g, "")
+        .replace(/\uFEFF/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
     }
 
     function renderResults(keyword = "") {
@@ -174,6 +199,7 @@
 
       if (!text) {
         resultDiv.innerHTML = `<div class="empty">กรุณาพิมพ์ชื่อหรือนามสกุลเพื่อค้นหา</div>`;
+        countDiv.textContent = `มีรายชื่อทั้งหมด ${names.length} คน`;
         return;
       }
 
@@ -204,7 +230,7 @@
     function openGoogleForm(name) {
       const url = new URL(PREFILL_URL);
 
-      // เปลี่ยนค่า field ชื่อให้เป็นชื่อที่ผู้ใช้เลือก
+      // เปลี่ยนเฉพาะ field ชื่อผู้เข้าอบรม
       url.searchParams.set(NAME_ENTRY_ID, name);
 
       window.location.href = url.toString();
@@ -214,7 +240,7 @@
       renderResults(this.value);
     });
 
-    renderResults();
+    loadNames();
   </script>
 </body>
 </html>
